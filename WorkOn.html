@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkON Playbook</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif; background:#0f1923; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; }
+
+/* ── SLIDE WRAPPER ── */
+.stage { width:900px; max-width:98vw; position:relative; }
+.slide { display:none; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.55); aspect-ratio:16/9; position:relative; flex-direction:column; }
+.slide.active { display:flex; }
+
+/* ── CONTROLS ── */
+.controls { display:flex; align-items:center; justify-content:center; gap:14px; margin-top:18px; }
+.btn { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#fff; padding:9px 22px; border-radius:30px; cursor:pointer; font-size:13px; transition:.2s; }
+.btn:hover { background:rgba(255,255,255,.25); }
+.btn:disabled { opacity:.3; cursor:default; }
+.counter { color:rgba(255,255,255,.5); font-size:13px; min-width:56px; text-align:center; }
+
+/* ── COMMON HEADER ── */
+.hd { padding:18px 36px 14px; }
+.hd .label { font-size:10px; letter-spacing:2px; text-transform:uppercase; opacity:.7; margin-bottom:4px; }
+.hd h2 { font-size:20px; font-weight:700; }
+.body { flex:1; padding:20px 36px 22px; overflow:hidden; }
+
+/* ══ SLIDE 1 — TITLE ══ */
+.s1 { background:linear-gradient(135deg,#1b4332 0%,#2d6a4f 60%,#1b4332 100%); justify-content:center; align-items:center; text-align:center; }
+.s1 .bubble { position:absolute; border-radius:50%; background:rgba(255,255,255,.04); }
+.s1 .b1 { width:340px;height:340px;top:-120px;right:-90px; }
+.s1 .b2 { width:260px;height:260px;bottom:-100px;left:-60px; }
+.s1 .tag { display:inline-block; border:1px solid rgba(255,255,255,.35); color:rgba(255,255,255,.8); font-size:11px; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:20px; }
+.s1 h1 { font-size:34px; font-weight:800; color:#fff; line-height:1.25; margin-bottom:12px; }
+.s1 .sub { font-size:14px; color:rgba(255,255,255,.65); margin-bottom:24px; }
+.s1 .tagline { display:inline-block; background:rgba(255,255,255,.15); backdrop-filter:blur(8px); border-radius:30px; padding:10px 28px; font-size:18px; font-weight:700; color:#fff; }
+
+/* ══ SLIDE 2 — VISION ══ */
+.s2 { }
+.s2 .hd { background:#1b4332; color:#fff; }
+.s2 .body { background:#f8fdf9; display:flex; gap:20px; align-items:stretch; }
+.vision-quote { background:linear-gradient(135deg,#1b4332,#2d6a4f); border-radius:12px; padding:24px 22px; color:#fff; flex:1; display:flex; flex-direction:column; justify-content:center; }
+.vision-quote .big { font-size:26px; font-weight:800; margin-bottom:10px; }
+.vision-quote p { font-size:12px; line-height:1.8; opacity:.85; }
+.vision-right { flex:1.4; display:flex; flex-direction:column; gap:12px; justify-content:center; }
+.diff-row { display:flex; gap:10px; }
+.diff-card { flex:1; border-radius:10px; padding:14px; font-size:11px; line-height:1.7; }
+.diff-old { background:#fff0f0; border:1px solid #ffc0c0; }
+.diff-old .dtitle { font-weight:700; color:#c00; margin-bottom:6px; font-size:12px; }
+.diff-new { background:#e8f5e9; border:1px solid #a5d6a7; }
+.diff-new .dtitle { font-weight:700; color:#1b4332; margin-bottom:6px; font-size:12px; }
+
+/* ══ SLIDE 3 — AI INBOX ══ */
+.s3 .hd { background:#1565c0; color:#fff; }
+.s3 .body { background:#f0f6ff; display:flex; gap:16px; }
+.inbox-tabs { display:flex; flex-direction:column; gap:8px; flex:1; justify-content:center; }
+.tab-card { border-radius:10px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start; }
+.tab-card .icon { font-size:20px; flex-shrink:0; margin-top:2px; }
+.tab-card h3 { font-size:12px; font-weight:700; margin-bottom:3px; }
+.tab-card p { font-size:11px; color:#555; line-height:1.6; }
+.tab-human { background:#fff; border:1px solid #d0e4ff; }
+.tab-ai { background:#e8f0fe; border:1px solid #90b4f4; }
+.inbox-points { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.point { background:#fff; border-left:3px solid #1565c0; border-radius:0 8px 8px 0; padding:10px 12px; font-size:11px; line-height:1.7; color:#333; }
+.point strong { color:#1565c0; display:block; margin-bottom:2px; font-size:12px; }
+
+/* ══ SLIDE 4 — PLAYBOOK ══ */
+.s4 .hd { background:#6a1b9a; color:#fff; }
+.s4 .body { background:#faf5ff; display:flex; gap:16px; }
+.pb-flow { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.pb-step { background:#fff; border-radius:10px; padding:11px 14px; display:flex; gap:10px; align-items:center; border:1px solid #e0c8f5; }
+.pb-step .num { width:28px;height:28px; border-radius:50%; background:#6a1b9a; color:#fff; font-weight:800; font-size:13px; display:flex;align-items:center;justify-content:center; flex-shrink:0; }
+.pb-step .txt h4 { font-size:12px; font-weight:700; color:#4a0e72; }
+.pb-step .txt p { font-size:11px; color:#666; }
+.pb-arrow { text-align:center; font-size:16px; color:#9c4dcc; margin:-2px 0; }
+.pb-points { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.pb-point { background:#fff; border-left:3px solid #6a1b9a; border-radius:0 8px 8px 0; padding:10px 12px; font-size:11px; line-height:1.7; }
+.pb-point strong { color:#6a1b9a; display:block; font-size:12px; margin-bottom:2px; }
+
+/* ══ SLIDE 5 — WORKFLOW ══ */
+.s5 .hd { background:#e65100; color:#fff; }
+.s5 .body { background:#fff8f5; display:flex; gap:16px; }
+.wf-pipeline { flex:1; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+.wf-layer { border-radius:10px; padding:12px 14px; }
+.wf-layer h4 { font-size:11px; font-weight:700; margin-bottom:3px; }
+.wf-layer p { font-size:11px; color:#555; line-height:1.6; }
+.wf-layer.l1 { background:#e8f5e9; border:1px solid #a5d6a7; }
+.wf-layer.l1 h4 { color:#1b5e20; }
+.wf-layer.l2 { background:#fff3e0; border:1px solid #ffcc80; }
+.wf-layer.l2 h4 { color:#e65100; }
+.wf-layer.l3 { background:#fce4ec; border:1px solid #f48fb1; }
+.wf-layer.l3 h4 { color:#880e4f; }
+.wf-conn { text-align:center; font-size:12px; color:#999; margin:-2px 0; }
+.wf-points { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.wf-point { background:#fff; border-left:3px solid #e65100; border-radius:0 8px 8px 0; padding:10px 12px; font-size:11px; line-height:1.7; }
+.wf-point strong { color:#e65100; display:block; font-size:12px; margin-bottom:2px; }
+
+/* ══ SLIDE 6 — SALARY CHECK ══ */
+.s6 .hd { background:#00695c; color:#fff; }
+.s6 .body { background:#e0f7fa; display:flex; gap:16px; }
+.salary-flow { flex:1; display:flex; flex-direction:column; justify-content:center; gap:8px; }
+.sf-box { background:#fff; border-radius:10px; padding:12px 14px; border:1px solid #b2dfdb; }
+.sf-box h4 { font-size:12px; font-weight:700; color:#00695c; margin-bottom:4px; }
+.sf-box p { font-size:11px; color:#555; line-height:1.6; }
+.sf-arrow { text-align:center; color:#00897b; font-size:14px; margin:-2px 0; }
+.salary-points { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.sal-point { background:#fff; border-left:3px solid #00695c; border-radius:0 8px 8px 0; padding:10px 12px; font-size:11px; line-height:1.7; }
+.sal-point strong { color:#00695c; display:block; font-size:12px; margin-bottom:2px; }
+
+/* ══ SLIDE 7 — AGENTIC LEVELS ══ */
+.s7 .hd { background:#37474f; color:#fff; }
+.s7 .body { background:#f5f7f8; display:flex; gap:16px; align-items:stretch; }
+.level-list { flex:1.2; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.lv { display:flex; gap:10px; align-items:flex-start; background:#fff; border-radius:10px; padding:11px 14px; }
+.lv .badge { min-width:32px; height:32px; border-radius:8px; display:flex;align-items:center;justify-content:center; font-weight:800; font-size:12px; color:#fff; flex-shrink:0; }
+.lv.l1 .badge { background:#78909c; }
+.lv.l2 .badge { background:#1565c0; }
+.lv.l3 .badge { background:#6a1b9a; }
+.lv.l4 .badge { background:#c62828; }
+.lv .ltxt h4 { font-size:12px; font-weight:700; color:#333; }
+.lv .ltxt p { font-size:11px; color:#666; margin-top:2px; }
+.lv .ltxt .feat { display:inline-block; margin-top:4px; background:#f0f0f0; border-radius:20px; padding:2px 10px; font-size:10px; color:#555; }
+.hr-diff { flex:1; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.hrd-title { font-size:11px; font-weight:700; color:#37474f; margin-bottom:4px; }
+.hrd-row { display:flex; gap:8px; }
+.hrd-card { flex:1; border-radius:8px; padding:10px; font-size:10px; line-height:1.7; }
+.hrd-gen { background:#e3f2fd; border:1px solid #90caf9; }
+.hrd-gen .ct { font-weight:700; color:#1565c0; margin-bottom:4px; font-size:11px; }
+.hrd-hr { background:#fce4ec; border:1px solid #f48fb1; }
+.hrd-hr .ct { font-weight:700; color:#880e4f; margin-bottom:4px; font-size:11px; }
+
+/* ══ SLIDE 8 — HR RUNTIME ══ */
+.s8 .hd { background:#212121; color:#fff; }
+.s8 .body { background:#fafafa; display:flex; gap:16px; }
+.rt-layers { flex:1; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+.rt-layer { border-radius:10px; padding:12px 14px; display:flex; gap:12px; align-items:center; }
+.rt-layer .icon { font-size:22px; flex-shrink:0; }
+.rt-layer .info h4 { font-size:12px; font-weight:700; }
+.rt-layer .info p { font-size:11px; color:#555; margin-top:2px; }
+.rt-layer.ai { background:#e8f5e9; border:1px solid #a5d6a7; }
+.rt-layer.ai h4 { color:#1b5e20; }
+.rt-layer.dsl { background:#fff3e0; border:1px solid #ffcc80; }
+.rt-layer.dsl h4 { color:#e65100; }
+.rt-layer.run { background:#ede7f6; border:1px solid #b39ddb; }
+.rt-layer.run h4 { color:#4527a0; }
+.rt-layer.core { background:#fce4ec; border:1px solid #f48fb1; }
+.rt-layer.core h4 { color:#880e4f; }
+.rt-conn2 { text-align:center; color:#aaa; font-size:11px; margin:-2px 0; }
+.cassette { flex:1; display:flex; flex-direction:column; gap:7px; justify-content:center; }
+.cas-title { font-size:11px; font-weight:700; color:#333; margin-bottom:2px; }
+.cas-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.cas-item { background:#fff; border-radius:8px; padding:9px 10px; border:1px solid #e0e0e0; font-size:11px; }
+.cas-item .cname { font-weight:700; color:#333; margin-bottom:2px; }
+.cas-item .cdesc { color:#777; font-size:10px; }
+
+/* ══ SLIDE 9 — CTA ══ */
+.s9 { background:linear-gradient(135deg,#1b4332,#2d6a4f); justify-content:center; align-items:center; text-align:center; }
+.s9 .bb1 { position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.04);top:-150px;right:-100px; }
+.s9 .bb2 { position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-120px;left:-80px; }
+.s9 h2 { font-size:30px; font-weight:800; color:#fff; margin-bottom:14px; }
+.s9 p { font-size:14px; color:rgba(255,255,255,.75); max-width:520px; line-height:1.8; margin-bottom:28px; }
+.s9 .pills { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.s9 .pill { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:30px; padding:8px 20px; color:#fff; font-size:13px; font-weight:600; backdrop-filter:blur(8px); }
+</style>
+</head>
+<body>
+<div class="stage">
+
+<!-- ① TITLE -->
+<div class="slide s1 active" id="s1">
+  <div class="bubble b1"></div>
+  <div class="bubble b2"></div>
+  <div style="position:relative;z-index:1">
+    <span class="tag">WorkON Playbook — Vision Showcase</span>
+    <h1>AI と、はたらく。</h1>
+    <p class="sub">人も AI も、ともに組織の一員として。<br>WorkON は、はたらく環境を支える <strong style="color:#fff">Work Intelligence</strong> です。</p>
+    <span class="tagline">🌿 WorkON Playbook プロトタイプ</span>
+  </div>
+</div>
+
+<!-- ② VISION -->
+<div class="slide s2" id="s2">
+  <div class="hd" style="background:#1b4332;color:#fff">
+    <div class="label">Vision</div>
+    <h2>WorkON が目指す新しい業務モデル</h2>
+  </div>
+  <div class="body" style="background:#f8fdf9;display:flex;gap:20px;align-items:stretch">
+    <div class="vision-quote">
+      <div class="big">🌿 AI と、はたらく。</div>
+      <p>従来型の「人が入力し、システムが処理する」SaaS ではなく、<strong>AI が先回りし、人が判断・承認する</strong>新しい業務遂行モデルを具体的な UI として描く。</p>
+    </div>
+    <div class="vision-right">
+      <div class="diff-row">
+        <div class="diff-card diff-old">
+          <div class="dtitle">❌ 従来型 HR SaaS</div>
+          人が入力 → システムが処理<br>
+          機能ごとの画面に移動が必要<br>
+          ベテランのノウハウが属人化<br>
+          途中で失敗 → 最初からやり直し
+        </div>
+        <div class="diff-card diff-new">
+          <div class="dtitle">✅ WorkON（Agentic）</div>
+          AI が先回りして提案・実行<br>
+          1つのINBOXで全てを把握<br>
+          Playbookに組織知識を蓄積<br>
+          状態管理で途中から再開可能
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ AI INBOX -->
+<div class="slide s3" id="s3">
+  <div class="hd" style="background:#1565c0;color:#fff">
+    <div class="label">Feature ❶</div>
+    <h2>AI INBOX — 人と AI が一緒にはたらく場所</h2>
+  </div>
+  <div class="body" style="background:#f0f6ff;display:flex;gap:16px">
+    <div class="inbox-tabs">
+      <div class="tab-card tab-human">
+        <div class="icon">👤</div>
+        <div>
+          <h3>要対応</h3>
+          <p>今、人がやらないといけないタスク<br>（残業代チェック・勤怠承認・社保確認等）</p>
+        </div>
+      </div>
+      <div class="tab-card tab-ai">
+        <div class="icon">🤖</div>
+        <div>
+          <h3>提案</h3>
+          <p>AI が周辺環境をセンシングした結果<br>「これをした方がいい」アンビエント提案</p>
+        </div>
+      </div>
+      <div class="tab-card tab-ai">
+        <div class="icon">🤖</div>
+        <div>
+          <h3>予定 / 完了報告</h3>
+          <p>AI が実行予定・実行済みのタスク一覧<br>（自動チェック・リマインド等）</p>
+        </div>
+      </div>
+    </div>
+    <div class="inbox-points">
+      <div class="point"><strong>🔗 人と AI の協働を可視化</strong>人のタスクと AI のアクションが同じタイムラインに並び、「誰が何をしているか」がひと目でわかる。</div>
+      <div class="point"><strong>📡 アンビエント提案</strong>勤怠・給与・組織変更などを常時センシングし、人が気づく前に提案を生成。</div>
+      <div class="point"><strong>⚡ ワンアクション完結</strong>確認→承認/却下がカード内で完結。コンテキストスイッチを最小化。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ PLAYBOOK -->
+<div class="slide s4" id="s4">
+  <div class="hd" style="background:#6a1b9a;color:#fff">
+    <div class="label">Feature ❷</div>
+    <h2>Playbook — AI と一緒に作るチェックリスト</h2>
+  </div>
+  <div class="body" style="background:#faf5ff;display:flex;gap:16px">
+    <div class="pb-flow">
+      <div class="pb-step">
+        <div class="num">1</div>
+        <div class="txt"><h4>📄 既存マニュアルをアップロード</h4><p>PDF / Word の資料を読み込む</p></div>
+      </div>
+      <div class="pb-arrow">↓</div>
+      <div class="pb-step">
+        <div class="num">2</div>
+        <div class="txt"><h4>🧠 AI がチェック項目に分解</h4><p>入社月・前月差分・社保料率変更 等</p></div>
+      </div>
+      <div class="pb-arrow">↓</div>
+      <div class="pb-step">
+        <div class="num">3</div>
+        <div class="txt"><h4>💬 対話的に構造化・育てる</h4><p>「この観点を追加して」とチャットで指示</p></div>
+      </div>
+      <div class="pb-arrow">↓</div>
+      <div class="pb-step">
+        <div class="num">4</div>
+        <div class="txt"><h4>⚙️ Workflow の実行パーツへ</h4><p>チェックカセットとして自動適用</p></div>
+      </div>
+    </div>
+    <div class="pb-points">
+      <div class="pb-point"><strong>🚫 属人化を防ぐ</strong>ベテランの頭の中にしかなかったチェック観点を構造化データとして組織に残す。</div>
+      <div class="pb-point"><strong>🔄 生きたチェックリスト</strong>AI がPlaybookの改善提案をINBOXに出し、人が承認するとチェック内容が進化する。</div>
+      <div class="pb-point"><strong>🔌 Runtime パーツとして統合</strong>給与AIチェック・Workflowの業務カセットとして自動的に適用される。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ WORKFLOW -->
+<div class="slide s5" id="s5">
+  <div class="hd" style="background:#e65100;color:#fff">
+    <div class="label">Feature ❸</div>
+    <h2>Workflow — HR Runtime の原型</h2>
+  </div>
+  <div class="body" style="background:#fff8f5;display:flex;gap:16px">
+    <div class="wf-pipeline">
+      <div class="wf-layer l1"><h4>📄 AI 理解層</h4><p>ドキュメントをインプットに、手順を抽出・DSL 生成</p></div>
+      <div class="wf-conn">↓</div>
+      <div class="wf-layer l2"><h4>📋 Workflow DSL</h4><p>フローの宣言的表現・ステップ定義</p></div>
+      <div class="wf-conn">↓</div>
+      <div class="wf-layer l3"><h4>⚙️ HR Runtime</h4><p>状態管理・実行制御・承認ルーティング</p></div>
+    </div>
+    <div class="wf-points">
+      <div class="wf-point"><strong>🔄 状態付き実行（Stateful）</strong>未実行→実行中→完了/中断を管理。「どこまで進んだか」を常に把握し、途中から再開可能。</div>
+      <div class="wf-point"><strong>🤖 AI コパイロット実行</strong>「次のステップはこれです」「この書類が必要です」とフロー中に常時ガイド。</div>
+      <div class="wf-point"><strong>✅ 承認・入力待ちの制御</strong>承認が必要なステップ・入力が必要なステップを区別し、適切な人に適切なタイミングで依頼。</div>
+      <div class="wf-point"><strong>🧩 業務カセットの統合</strong>通知・入力依頼・承認依頼・データ登録・書類生成がWorkflowの実行パーツとして組み込まれる。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ SALARY CHECK -->
+<div class="slide s6" id="s6">
+  <div class="hd" style="background:#00695c;color:#fff">
+    <div class="label">Feature ❺</div>
+    <h2>給与 AI チェック — Playbook が動く場所</h2>
+  </div>
+  <div class="body" style="background:#e0f7fa;display:flex;gap:16px">
+    <div class="salary-flow">
+      <div class="sf-box"><h4>📋 Playbook のチェック項目</h4><p>入社月チェック / 前月差分チェック / 社保料率変更チェック…</p></div>
+      <div class="sf-arrow">↓ 適用</div>
+      <div class="sf-box"><h4>🔍 AI が自動チェック実行</h4><p>156名分のデータを横断分析。異常検知 + 根拠提示。</p></div>
+      <div class="sf-arrow">↓ 結果</div>
+      <div class="sf-box"><h4>📊 問題あり 2件 ／ 要確認 5件 ／ 問題なし 149件</h4><p>Critical Write（給与確定）は人の承認なしに確定しない。</p></div>
+    </div>
+    <div class="salary-points">
+      <div class="sal-point"><strong>🧠 Playbook ベースのチェック</strong>チェック項目はハードコードではなくPlaybookで管理。AIと人事が一緒にチェック精度を育てていく。</div>
+      <div class="sal-point"><strong>🔎 異常検知 + 根拠提示</strong>前月比の差分、法定控除の整合性、マスターデータとの矛盾を自動検出し、判断根拠を必ず提示。</div>
+      <div class="sal-point"><strong>🔒 リスクレベル分類</strong>給与確定は Critical Write に相当。人の承認なしには確定しない設計。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ AGENTIC LEVELS -->
+<div class="slide s7" id="s7">
+  <div class="hd" style="background:#37474f;color:#fff">
+    <div class="label">Agentic AI Architecture</div>
+    <h2>Agentic レベルと HR 領域が Runtime を必要とする理由</h2>
+  </div>
+  <div class="body" style="background:#f5f7f8;display:flex;gap:16px">
+    <div class="level-list">
+      <div class="lv l1"><div class="badge">L1</div><div class="ltxt"><h4>情報を要約・提示する</h4><p>AI がデータを集約して見せる</p><span class="feat">給与AIチェック / リスク検知</span></div></div>
+      <div class="lv l2"><div class="badge">L2</div><div class="ltxt"><h4>草案を生成し、人が承認</h4><p>AI が下書き、人が最終判断</p><span class="feat">Playbook / 届出書類作成</span></div></div>
+      <div class="lv l3"><div class="badge">L3</div><div class="ltxt"><h4>フローを設計し、協働実行</h4><p>AI がフローを構成・コパイロット</p><span class="feat">Workflow ⭐</span></div></div>
+      <div class="lv l4"><div class="badge">L4</div><div class="ltxt"><h4>自律実行、必要時だけ人に判断</h4><p>AI が主体、人は承認・例外判断</p><span class="feat">AI INBOX + 勤怠AI確認 ⭐</span></div></div>
+    </div>
+    <div class="hr-diff">
+      <div class="hrd-title">⚠️ なぜ HR には Runtime が必要か</div>
+      <div class="hrd-row">
+        <div class="hrd-card hrd-gen"><div class="ct">一般的な AI エージェント</div>数分〜数時間で完結<br>最初からやり直せる<br>出力の品質低下のみ<br>ステートレスでOK<br>監査要件ほぼなし</div>
+        <div class="hrd-card hrd-hr"><div class="ct">HR 業務</div>入社フロー = 数週間<br><strong>途中からの再開が必須</strong><br>法令違反・給与未払いリスク<br>承認待ち・入力待ちが複数並行<br><strong>監査ログが法的に必須</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑧ HR RUNTIME -->
+<div class="slide s8" id="s8">
+  <div class="hd" style="background:#212121;color:#fff">
+    <div class="label">HR Runtime Model</div>
+    <h2>業務カセットモデルと HR Runtime アーキテクチャ</h2>
+  </div>
+  <div class="body" style="background:#fafafa;display:flex;gap:16px">
+    <div class="rt-layers">
+      <div class="rt-layer ai"><div class="icon">🧠</div><div class="info"><h4>AI 理解層</h4><p>手順抽出・DSL 生成 / Playbookアップロード→AI解析</p></div></div>
+      <div class="rt-conn2">↓</div>
+      <div class="rt-layer dsl"><div class="icon">📋</div><div class="info"><h4>Workflow DSL</h4><p>フローの宣言的表現 / WorkflowSetupのステップ定義</p></div></div>
+      <div class="rt-conn2">↓</div>
+      <div class="rt-layer run"><div class="icon">⚙️</div><div class="info"><h4>HR Runtime</h4><p>状態管理・実行制御 / WorkflowExecution（状態遷移+AIチャット）</p></div></div>
+      <div class="rt-conn2">↓</div>
+      <div class="rt-layer core"><div class="icon">💼</div><div class="info"><h4>SaaS Core Logic</h4><p>給与・勤怠など壊せない処理 / 給与AIチェック（参照のみ）</p></div></div>
+    </div>
+    <div class="cassette">
+      <div class="cas-title">🧩 業務カセット一覧</div>
+      <div class="cas-grid">
+        <div class="cas-item"><div class="cname">📣 通知</div><div class="cdesc">AI INBOX の通知カード<br>→ Runtime → 通知サービス実行</div></div>
+        <div class="cas-item"><div class="cname">✏️ 入力依頼</div><div class="cdesc">フロー中のAIチャット入力<br>→ Runtime → waiting_input 状態</div></div>
+        <div class="cas-item"><div class="cname">✅ 承認依頼</div><div class="cdesc">AI提案の承認/却下<br>→ Runtime → waiting_approval 状態</div></div>
+        <div class="cas-item"><div class="cname">📄 書類生成</div><div class="cdesc">届出書類作成（AI下書き）<br>→ Runtime → 書類生成カセット実行</div></div>
+        <div class="cas-item"><div class="cname">🔍 チェック</div><div class="cdesc">給与AIチェック（Playbookベース）<br>→ Runtime → チェックカセット実行</div></div>
+        <div class="cas-item"><div class="cname">💾 データ登録</div><div class="cdesc">人事マスター登録<br>→ Runtime → Critical Write 実行</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ CTA -->
+<div class="slide s9" id="s9">
+  <div class="bb1"></div>
+  <div class="bb2"></div>
+  <div style="position:relative;z-index:1">
+    <h2>🌿 WorkON — AI と、はたらく未来へ</h2>
+    <p>このプロトタイプは「将来こんなことができるプロダクトを作っている」ことを示す資料。<br>Playbook → AI 理解層 → Workflow → HR Runtime という一貫したアーキテクチャが、<br>HR 業務の属人化・非効率・法的リスクを解決する。</p>
+    <div class="pills">
+      <div class="pill">📥 AI INBOX</div>
+      <div class="pill">📋 Playbook</div>
+      <div class="pill">🔄 Workflow</div>
+      <div class="pill">📄 届出書類作成</div>
+      <div class="pill">💴 給与AIチェック</div>
+      <div class="pill">⚙️ HR Runtime</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="btn" id="prev" onclick="go(-1)" disabled>◀ 前へ</button>
+  <span class="counter" id="ctr">1 / 9</span>
+  <button class="btn" id="next" onclick="go(1)">次へ ▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let cur = 0;
+function go(d) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(slides.length-1, cur+d));
+  slides[cur].classList.add('active');
+  document.getElementById('ctr').textContent = `${cur+1} / ${slides.length}`;
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===slides.length-1;
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(-1);
+});
+</script>
+</body>
+</html>
